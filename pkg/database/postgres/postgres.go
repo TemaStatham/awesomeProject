@@ -14,7 +14,7 @@ type Config struct {
 	SSLMode  string
 }
 
-func NewPostgresDB(cfg Config) (*sqlx.DB, error) {
+func NewPostgresDB(cfg *Config) (*sqlx.DB, error) {
 	db, err := sqlx.Open(
 		"postgres",
 		fmt.Sprintf(

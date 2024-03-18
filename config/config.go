@@ -12,6 +12,13 @@ type Config struct {
 	StoragePaths string           `yaml:"storage_paths" env-required:"true"`
 	PgConfig     PostgresConfig   `yaml:"postgres" env-required:"true"`
 	ChConfig     ClickhouseConfig `yaml:"clickhouse" env-required:"true"`
+	RConfig      RedisConfig      `yaml:"redis" env-required:"true"`
+}
+
+type RedisConfig struct {
+	Addr     string `yaml:"addr" env-required:"true"`
+	Password string `yaml:"password" env-required:"true"`
+	DB       int    `yaml:"db" env-default:"0"`
 }
 
 type ClickhouseConfig struct {

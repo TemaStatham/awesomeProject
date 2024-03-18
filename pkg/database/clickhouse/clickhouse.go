@@ -19,7 +19,7 @@ type Config struct {
 	Version  string
 }
 
-func NewClickhouseDB(cfg Config) (driver.Conn, error) {
+func NewClickhouseDB(cfg *Config) (driver.Conn, error) {
 	var (
 		ctx       = context.Background()
 		conn, err = clickhouse.Open(&clickhouse.Options{
