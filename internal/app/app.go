@@ -2,7 +2,8 @@ package app
 
 import (
 	"awesomeProject/config"
-	"awesomeProject/internal/repository/postgres"
+	clickhousedb "awesomeProject/pkg/database/clickhouse"
+	"awesomeProject/pkg/database/postgres"
 )
 
 type App struct {
@@ -18,12 +19,25 @@ func (a *App) Run() {
 	// инит кликхаус
 
 	_, err := postgres.NewPostgresDB(postgres.Config{
-		Host:     cfg.DBConfig.Host,
-		Port:     cfg.DBConfig.Port,
-		Username: cfg.DBConfig.Username,
-		Password: cfg.DBConfig.Password,
-		DBName:   cfg.DBConfig.DBName,
-		SSLMode:  cfg.DBConfig.SSLMode,
+		Host:     cfg.PgConfig.Host,
+		Port:     cfg.PgConfig.Port,
+		Username: cfg.PgConfig.Username,
+		Password: cfg.PgConfig.Password,
+		DBName:   cfg.PgConfig.DBName,
+		SSLMode:  cfg.PgConfig.SSLMode,
+	})
+	if err != nil {
+		panic(err)
+	}
+
+	_, err = clickhousedb.NewClickhouseDB(clickhousedb.Config{
+		Host:     "",
+		Port:     "",
+		Database: "",
+		Username: "",
+		Password: "",
+		Client:   "",
+		Version:  "",
 	})
 	if err != nil {
 		panic(err)

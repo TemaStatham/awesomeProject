@@ -8,9 +8,20 @@ import (
 
 // Config - структура конфига
 type Config struct {
-	Env          string         `yaml:"env" env-default:"local"`
-	StoragePaths string         `yaml:"storage_paths" env-required:"true"`
-	DBConfig     PostgresConfig `yaml:"postgres" env-required:"true"`
+	Env          string           `yaml:"env" env-default:"local"`
+	StoragePaths string           `yaml:"storage_paths" env-required:"true"`
+	PgConfig     PostgresConfig   `yaml:"postgres" env-required:"true"`
+	ChConfig     ClickhouseConfig `yaml:"clickhouse" env-required:"true"`
+}
+
+type ClickhouseConfig struct {
+	Port     string `yaml:"port" env-default:"5436"`
+	Host     string `yaml:"host" env-default:"localhost"`
+	Database string `yaml:"database" env-required:"true"`
+	Username string `yaml:"username" env-required:"true"`
+	Password string `yaml:"password" env-required:"true"`
+	Client   string `yaml:"client" env-required:"true"`
+	Version  string `yaml:"version" env-default:"0.1"`
 }
 
 type PostgresConfig struct {

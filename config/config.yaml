@@ -2,6 +2,15 @@ env: "local" # dev, prod
 
 storage_paths: "./storage/sso.db"
 
+clickhouse:
+  port: "9000"
+  host: "localhost"
+  database: "database"
+  username: "artem"
+  password: "qwerty"
+  client: "client-test"
+  version: "0.1"
+
 postgres:
   port: "5436"
   host: "localhost"
@@ -9,3 +18,4 @@ postgres:
   dbname: "postgres"
   ssl_mode: "disable"
   password: "qwerty"
+
