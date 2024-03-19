@@ -22,13 +22,12 @@ type RedisConfig struct {
 }
 
 type ClickhouseConfig struct {
-	Port     string `yaml:"port" env-default:"5436"`
-	Host     string `yaml:"host" env-default:"localhost"`
-	Database string `yaml:"database" env-required:"true"`
-	Username string `yaml:"username" env-required:"true"`
-	Password string `yaml:"password" env-required:"true"`
-	Client   string `yaml:"client" env-required:"true"`
-	Version  string `yaml:"version" env-default:"0.1"`
+	NativePort string `yaml:"native_port" env-default:"9000"`
+	HttpPort   string `yaml:"http_port" env-default:"8123"`
+	Addr       string `yaml:"addr" env-default:"localhost"`
+	Database   string `yaml:"database" env-required:"true"`
+	Username   string `yaml:"username" env-required:"true"`
+	Password   string `yaml:"password" env-required:"true"`
 }
 
 type PostgresConfig struct {

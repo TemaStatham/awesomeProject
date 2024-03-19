@@ -1,26 +1,22 @@
 env: "local" # dev, prod
-
 storage_paths: "./storage/sso.db"
-
 redis:
   addr: "localhost:6379"
   password: "qwerty"
   db: 0
-
 clickhouse:
-  port: "9000"
-  host: "localhost"
-  database: "database"
+  native_port: "9000"
+  http_port: "8123"
+  addr: ""
+  database: "awesomedb"
   username: "artem"
   password: "qwerty"
-  client: "client-test"
-  version: "0.1"
-
 postgres:
-  port: "5436"
+  port: "5432"
   host: "localhost"
   username: "artem"
   dbname: "awesomedb"
   ssl_mode: "disable"
   password: "qwerty"
-
+nats:
+  url: ":4222"

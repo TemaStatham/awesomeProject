@@ -2,7 +2,6 @@ package clickhouse
 
 import (
 	"context"
-	"crypto/tls"
 	"fmt"
 
 	"github.com/ClickHouse/clickhouse-go/v2"
@@ -10,39 +9,23 @@ import (
 )
 
 type Config struct {
-	Host     string
-	Port     string
-	Database string
-	Username string
-	Password string
-	Client   string
-	Version  string
+	Addr       string
+	NativePort string
+	HttpPort   string
+	Database   string
+	Username   string
+	Password   string
 }
 
 func NewClickhouseDB(cfg *Config) (driver.Conn, error) {
 	var (
 		ctx       = context.Background()
 		conn, err = clickhouse.Open(&clickhouse.Options{
-			Addr: []string{fmt.Sprintf("%s:%s", cfg.Host, cfg.Port)},
+			Addr: []string{fmt.Sprintf("%s:%s", cfg.Addr, cfg.NativePort)},
 			Auth: clickhouse.Auth{
 				Database: cfg.Database,
 				Username: cfg.Username,
 				Password: cfg.Password,
-			},
-			ClientInfo: clickhouse.ClientInfo{
-				Products: []struct {
-					Name    string
-					Version string
-				}{
-					{Name: cfg.Client, Version: cfg.Version},
-				},
-			},
-
-			Debugf: func(format string, v ...interface{}) {
-				fmt.Printf(format, v)
-			},
-			TLS: &tls.Config{
-				InsecureSkipVerify: true,
 			},
 		})
 	)
@@ -57,5 +40,6 @@ func NewClickhouseDB(cfg *Config) (driver.Conn, error) {
 		}
 		return nil, err
 	}
+
 	return conn, nil
 }
