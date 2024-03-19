@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS awesomedb.tasks(
+CREATE TABLE IF NOT EXISTS awesomedb.logs(
                                             Id INTEGER,
                                             ProjectId INTEGER,
                                             Name VARCHAR(255),
@@ -9,5 +9,5 @@ CREATE TABLE IF NOT EXISTS awesomedb.tasks(
 ) ENGINE=MergeTree()
     ORDER BY (Id,ProjectId,Name);
 
-INSERT INTO awesomedb.tasks(Id, ProjectId, Name, Description, Priority, Removed, EventTime)
+INSERT INTO awesomedb.logs(Id, ProjectId, Name, Description, Priority, Removed, EventTime)
                             VALUES (0,0,'0','',0,false,now());
