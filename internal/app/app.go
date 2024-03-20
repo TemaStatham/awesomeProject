@@ -3,17 +3,24 @@ package app
 import (
 	"awesomeProject/config"
 	"awesomeProject/internal/handler"
+	clickhouserepos "awesomeProject/internal/repository/clickhouse"
 	postgresrepos "awesomeProject/internal/repository/postgres"
-	service "awesomeProject/internal/service"
+	redisrepos "awesomeProject/internal/repository/redis"
+	"awesomeProject/internal/service/logger/logSaver"
+	"awesomeProject/internal/service/logger/logSender"
+	"awesomeProject/internal/service/service"
+	"awesomeProject/internal/service/unloader"
 	clickhousedb "awesomeProject/pkg/database/clickhouse"
 	postgresdb "awesomeProject/pkg/database/postgres"
 	redisdb "awesomeProject/pkg/database/redis"
 	"awesomeProject/pkg/logger"
+	"awesomeProject/pkg/nats"
 	"awesomeProject/pkg/server"
 	"context"
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 )
 
 type App struct {
@@ -61,8 +68,24 @@ func (a *App) Run() {
 		panic(err)
 	}
 
-	repos := postgresrepos.NewPostgres(pg, l)
-	serv := service.NewService(l, repos, repos, repos, repos)
+	nats, err := nats.ConnectNATS()
+	if err != nil {
+		panic(err)
+	}
+
+	chrepos := clickhouserepos.NewClickhouse(ch, l)
+	rrepos := redisrepos.NewRedis(r, l)
+	pgrepos := postgresrepos.NewPostgres(pg, l)
+
+	saver := logSaver.NewLogSaver(l, nats, chrepos)
+	go saver.Save(context.Background())
+
+	sender := logSender.NewLogSender(l, nats)
+	unl := unloader.NewUnloader(l, rrepos, pgrepos, sender)
+	go unl.UnloadOnceWhile(context.Background(), 1*time.Minute)
+
+	serv := service.NewService(l, pgrepos, pgrepos, pgrepos, pgrepos, rrepos, rrepos, rrepos, sender)
+
 	hand := handler.NewHandler(l, serv, serv, serv, serv)
 
 	srv := new(server.Server)
