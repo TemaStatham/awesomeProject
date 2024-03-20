@@ -24,15 +24,9 @@ func (s *Service) Create(ctx context.Context, name string, projectID int) (model
 		return models.Goods{}, ErrNameIsEmpty
 	}
 
-	id, err := s.SaveGood(ctx, name, projectID)
+	g, err := s.SaveGood(ctx, name, projectID)
 	if err != nil {
 		log.Error("good is not saved", ErrInternal.Error())
-		return models.Goods{}, ErrInternal
-	}
-
-	g, err := s.GetGoodByID(ctx, id)
-	if err != nil {
-		log.Error("good is not getted", ErrInternal.Error())
 		return models.Goods{}, ErrInternal
 	}
 
@@ -59,15 +53,9 @@ func (s *Service) Update(
 		return models.Goods{}, ErrNameIsEmpty
 	}
 
-	newID, err := s.ChangeDescription(ctx, name, description, id, projectID)
+	g, err := s.ChangeDescription(ctx, name, description, id, projectID)
 	if err != nil {
 		log.Error("good is not update", ErrInternal.Error())
-		return models.Goods{}, ErrInternal
-	}
-
-	g, err := s.GetGoodByID(ctx, newID)
-	if err != nil {
-		log.Error("good is not getted", ErrInternal.Error())
 		return models.Goods{}, ErrInternal
 	}
 

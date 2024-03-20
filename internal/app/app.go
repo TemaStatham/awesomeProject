@@ -3,6 +3,8 @@ package app
 import (
 	"awesomeProject/config"
 	"awesomeProject/internal/handler"
+	postgresrepos "awesomeProject/internal/repository/postgres"
+	service "awesomeProject/internal/service"
 	clickhousedb "awesomeProject/pkg/database/clickhouse"
 	postgresdb "awesomeProject/pkg/database/postgres"
 	redisdb "awesomeProject/pkg/database/redis"
@@ -38,7 +40,7 @@ func (a *App) Run() {
 		panic(err)
 	}
 
-	_, err = clickhousedb.NewClickhouseDB(&clickhousedb.Config{
+	ch, err := clickhousedb.NewClickhouseDB(&clickhousedb.Config{
 		HttpPort:   cfg.ChConfig.HttpPort,
 		NativePort: cfg.ChConfig.NativePort,
 		Addr:       cfg.ChConfig.Addr,
@@ -50,7 +52,7 @@ func (a *App) Run() {
 		panic(err)
 	}
 
-	_, err = redisdb.NewRedisDB(&redisdb.Config{
+	r, err := redisdb.NewRedisDB(&redisdb.Config{
 		Addr:     cfg.RConfig.Addr,
 		Password: cfg.RConfig.Password,
 		DB:       cfg.RConfig.DB,
@@ -59,7 +61,9 @@ func (a *App) Run() {
 		panic(err)
 	}
 
-	hand := handler.NewHandler(l)
+	repos := postgresrepos.NewPostgres(pg, l)
+	serv := service.NewService(l, repos, repos, repos, repos)
+	hand := handler.NewHandler(l, serv, serv, serv, serv)
 
 	srv := new(server.Server)
 	go func() {
@@ -82,7 +86,17 @@ func (a *App) Run() {
 	}
 
 	if err := pg.Close(); err != nil {
-		l.Info("error occured on db connection close: %s", err.Error())
+		l.Info("error occured on pg db connection close: %s", err.Error())
+		return
+	}
+
+	if err := r.Close(); err != nil {
+		l.Info("error occured on redis db connection close: %s", err.Error())
+		return
+	}
+
+	if err := ch.Close(); err != nil {
+		l.Info("error occured on clickhouse db connection close: %s", err.Error())
 		return
 	}
 

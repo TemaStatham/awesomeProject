@@ -15,11 +15,11 @@ type Service struct {
 }
 
 type GoodSaver interface {
-	SaveGood(ctx context.Context, name string, projectID int) (int, error)
+	SaveGood(ctx context.Context, name string, projectID int) (models.Goods, error)
 }
 
 type GoodUpdater interface {
-	ChangeDescription(ctx context.Context, name string, description string, id int, projectID int) (int, error)
+	ChangeDescription(ctx context.Context, name string, description string, id int, projectID int) (models.Goods, error)
 	RedistributePriorities(ctx context.Context, newPriority int, id int, projectID int) ([]models.Priorities, error)
 }
 
@@ -28,7 +28,6 @@ type GoodRemover interface {
 }
 
 type GoodGetter interface {
-	GetGoodByID(ctx context.Context, id int) (models.Goods, error)
 	GetList(ctx context.Context, limit int, offset int) (models.List, error)
 }
 
