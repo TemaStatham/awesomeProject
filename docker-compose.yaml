@@ -1,28 +1,6 @@
 version: '3.7'
 
 services:
-  awesomeproject:
-    depends_on:
-      - postgres
-      - redis
-      - nats
-      - clickhouse
-    build:
-      context: .
-    volumes:
-      - ./config/:/bin/app/config/
-    links:
-      - "postgres:postgres"
-      - "redis:redis"
-      - "clickhouse:clickhouse"
-      - "nats:nats"
-    environment:
-      CONFIG_PATH: "./config/config.yaml"
-      REDIS_ADD: "redis"
-      CH_ADDR: "clickhouse"
-      NATS_URL: "nats"
-      POSTGRES_URL: "postgres://artem:qwwerty@postgres/awesomedb?sslmode=disable"
-
 
 
   postgres:

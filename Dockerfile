@@ -1,15 +1,16 @@
-FROM golang:latest as builder
+FROM golang:1.22
+
 WORKDIR /app
-COPY go.mod .
-COPY go.sum .
+
+COPY go.mod go.sum ./
+
 RUN go mod download
-COPY . .
-RUN GOOS=linux GOARH=amd64 go build -o server cmd/server/main.go
-ENTRYPOINT ["/bin/app/server"]
 
-FROM golang
-WORKDIR /bin/app
-COPY --from=builder /app/server server
+COPY *.go ./
 
-EXPOSE 5050
-ENTRYPOINT ["/bin/app/server"]
+RUN CGO_ENABLED=0 GOOS=linux go build -o /docker-gs-ping
+
+EXPOSE 8080
+
+CMD ["/docker-gs-ping"]
+

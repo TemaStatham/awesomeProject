@@ -19,9 +19,13 @@ type Handler struct {
 	ListProvider
 }
 
-func NewHandler(_log *slog.Logger) *Handler {
+func NewHandler(_log *slog.Logger, c GoodCreator, u GoodUpdater, r GoodRemover, l ListProvider) *Handler {
 	return &Handler{
-		log: _log,
+		log:          _log,
+		GoodRemover:  r,
+		GoodUpdater:  u,
+		GoodCreator:  c,
+		ListProvider: l,
 	}
 }
 
@@ -63,7 +67,7 @@ func (h *Handler) Init() *gin.Engine {
 		goods.GET("/list")
 	}
 
-	log.Info("Handler init")
+	log.Info("Handler init successfully")
 
 	return router
 }

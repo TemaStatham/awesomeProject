@@ -9,5 +9,3 @@ CREATE TABLE IF NOT EXISTS awesomedb.logs(
 ) ENGINE=MergeTree()
     ORDER BY (Id,ProjectId,Name);
 
-INSERT INTO awesomedb.logs(Id, ProjectId, Name, Description, Priority, Removed, EventTime)
-                            VALUES (0,0,'0','',0,false,now());
