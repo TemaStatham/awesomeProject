@@ -13,6 +13,7 @@ type Config struct {
 	PgConfig     PostgresConfig   `yaml:"postgres" env-required:"true"`
 	ChConfig     ClickhouseConfig `yaml:"clickhouse" env-required:"true"`
 	RConfig      RedisConfig      `yaml:"redis" env-required:"true"`
+	Nats         Nats             `yaml:"nats" env-required:"true"`
 }
 
 type RedisConfig struct {
@@ -37,6 +38,10 @@ type PostgresConfig struct {
 	DBName   string `yaml:"dbname" env-required:"true"`
 	SSLMode  string `yaml:"ssl_mode" env-default:"5436"`
 	Password string `yaml:"password" env-required:"true"`
+}
+
+type Nats struct {
+	Port string `yaml:"port" env-default:"4222"`
 }
 
 // MustLoad получает структуру конфига

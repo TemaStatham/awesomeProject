@@ -13,7 +13,13 @@ func (s *Service) GetList(ctx context.Context, limit int, offset int) (models.Li
 		slog.String("op", op),
 	)
 
+	l, err := s.GoodGetter.GetList(ctx, limit, offset)
+	if err != nil {
+		log.Error("get list error")
+		return models.List{}, err
+	}
+
 	log.Info("service get list successfully")
 
-	return models.List{}, nil
+	return l, nil
 }

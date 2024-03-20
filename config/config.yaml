@@ -19,4 +19,4 @@ postgres:
   ssl_mode: "disable"
   password: "qwerty"
 nats:
-  url: ":4222"
+  port: ":4222"

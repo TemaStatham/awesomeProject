@@ -12,6 +12,7 @@ import (
 type LogSender struct {
 	log    *slog.Logger
 	stream nats.JetStreamContext
+	ch     chan models.Goods
 }
 
 func NewLogSender(l *slog.Logger, s nats.JetStreamContext) *LogSender {
@@ -22,26 +23,38 @@ func NewLogSender(l *slog.Logger, s nats.JetStreamContext) *LogSender {
 }
 
 func (l *LogSender) Log(ctx context.Context, goods models.Goods) error {
-	goodsJSON, err := json.Marshal(goods)
-	if err != nil {
-		l.log.Error("Error marshalling goods to JSON:", err)
-		return err
-	}
-
-	err = l.send(goodsJSON)
-	if err != nil {
-		l.log.Error("Error sending log message:", err)
-		return err
-	}
-
+	l.ch <- goods
 	return nil
 }
 
 func (l *LogSender) send(data []byte) error {
-	_, err := l.stream.Publish("log.subject", data)
+	_, err := l.stream.Publish("log", data)
 	if err != nil {
 		return fmt.Errorf("error publishing message to NATS: %w", err)
 	}
-
 	return nil
+}
+
+func (l *LogSender) Start(ctx context.Context) {
+	go func() {
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case goods := <-l.ch:
+				// Преобразуем данные в JSON
+				goodsJSON, err := json.Marshal(goods)
+				if err != nil {
+					l.log.Error("Error marshalling goods to JSON:", err)
+					continue
+				}
+
+				// Отправляем данные методу send
+				if err := l.send(goodsJSON); err != nil {
+					l.log.Error("Error sending log message:", err)
+					continue
+				}
+			}
+		}
+	}()
 }

@@ -29,7 +29,7 @@ type Saver interface {
 func (l *LogSaver) Save(ctx context.Context) error {
 	msgCh := make(chan *nats.Msg)
 
-	sub, err := l.stream.Subscribe("log.subject", func(msg *nats.Msg) {
+	sub, err := l.stream.Subscribe("log", func(msg *nats.Msg) {
 		msgCh <- msg
 	})
 	if err != nil {

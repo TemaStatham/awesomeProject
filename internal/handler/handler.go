@@ -57,14 +57,14 @@ func (h *Handler) Init() *gin.Engine {
 
 	good := router.Group("/good")
 	{
-		good.POST("/create")
-		good.PATCH("/update")
-		good.DELETE("/remove")
-		good.PATCH("/reprioritiize")
+		good.POST("/create", h.create)
+		good.PATCH("/update", h.update)
+		good.DELETE("/remove", h.remove)
+		good.PATCH("/reprioritiize", h.reprioritiize)
 	}
 	goods := router.Group("/goods")
 	{
-		goods.GET("/list")
+		goods.GET("/list", h.getList)
 	}
 
 	log.Info("Handler init successfully")

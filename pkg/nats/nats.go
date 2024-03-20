@@ -2,17 +2,28 @@ package nats
 
 import "github.com/nats-io/nats.go"
 
-func ConnectNATS() (nats.JetStreamContext, error) {
-	// Подключение к серверу NATS
-	nc, err := nats.Connect(nats.DefaultURL)
+const (
+	maxPending = 256
+)
+
+func ConnectNATS(url string) (nats.JetStreamContext, error) {
+	nc, err := nats.Connect(url)
 	if err != nil {
 		return nil, err
 	}
 
-	// Создание контекста для работы с JetStream
-	js, err := nc.JetStream(nats.PublishAsyncMaxPending(256))
+	js, err := nc.JetStream(nats.PublishAsyncMaxPending(maxPending))
 	if err != nil {
-		nc.Close() // Закрываем соединение в случае ошибки
+		nc.Close()
+		return nil, err
+	}
+
+	_, err = js.AddStream(&nats.StreamConfig{
+		Name:     "log",
+		Subjects: []string{"log"},
+	})
+	if err != nil {
+		nc.Close()
 		return nil, err
 	}
 

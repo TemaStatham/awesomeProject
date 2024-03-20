@@ -93,7 +93,7 @@ func (s *Service) Remove(ctx context.Context, id int, projectID int) (models.Pro
 	log := s.log.With(
 		slog.String("op", op),
 	)
-	p, err := s.Remove(ctx, id, projectID)
+	p, err := s.GoodRemover.Remove(ctx, id, projectID)
 	if err != nil {
 		log.Error("remove error", ErrInternal.Error())
 		return models.Projects{}, ErrInternal

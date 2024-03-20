@@ -180,7 +180,7 @@ func (h *Handler) reprioritiize(c *gin.Context) {
 }
 
 func parseParams(c *gin.Context) (int, int, error) {
-	projectId, err := strconv.Atoi(c.Query("campaignId"))
+	projectId, err := strconv.Atoi(c.Query("projectId"))
 	if err != nil {
 		_ = c.AbortWithError(http.StatusBadRequest, err)
 		return 0, 0, err

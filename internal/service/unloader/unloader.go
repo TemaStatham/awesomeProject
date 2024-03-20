@@ -44,7 +44,7 @@ func (u *Unloader) UnloadOnceWhile(ctx context.Context, t time.Duration) {
 		slog.String("op", op),
 	)
 
-	log.Info("collect product")
+	log.Info("unload product")
 
 	ticker := time.NewTicker(t)
 	defer ticker.Stop()

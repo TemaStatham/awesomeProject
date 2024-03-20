@@ -23,6 +23,10 @@ import (
 	"time"
 )
 
+const (
+	timeout = 1 * time.Minute
+)
+
 type App struct {
 }
 
@@ -68,7 +72,7 @@ func (a *App) Run() {
 		panic(err)
 	}
 
-	nats, err := nats.ConnectNATS()
+	nats, err := nats.ConnectNATS(cfg.Nats.Port)
 	if err != nil {
 		panic(err)
 	}
@@ -77,12 +81,14 @@ func (a *App) Run() {
 	rrepos := redisrepos.NewRedis(r, l)
 	pgrepos := postgresrepos.NewPostgres(pg, l)
 
+	sender := logSender.NewLogSender(l, nats)
+	go sender.Start(context.Background())
+
 	saver := logSaver.NewLogSaver(l, nats, chrepos)
 	go saver.Save(context.Background())
 
-	sender := logSender.NewLogSender(l, nats)
 	unl := unloader.NewUnloader(l, rrepos, pgrepos, sender)
-	go unl.UnloadOnceWhile(context.Background(), 1*time.Minute)
+	go unl.UnloadOnceWhile(context.Background(), timeout)
 
 	serv := service.NewService(l, pgrepos, pgrepos, pgrepos, pgrepos, rrepos, rrepos, rrepos, sender)
 
